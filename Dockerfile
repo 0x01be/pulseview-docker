@@ -1,4 +1,4 @@
-FROM 0x01be/sigrok:lib as sigrok
+FROM 0x01be/sigrok:arm32v6-lib as sigrok
 
 FROM alpine as builder
 
@@ -41,7 +41,7 @@ RUN cmake \
 RUN make VERBOSE=1
 RUN make install
 
-FROM 0x01be/xpra
+FROM 0x01be/xpra:arm32v6
 
 COPY --from=builder /opt/pulseview/ /opt/pulseview/
 
