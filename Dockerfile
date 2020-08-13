@@ -17,8 +17,9 @@ RUN apk --no-cache add --virtual pulseview-build-dependencies \
     hidapi-dev \
     bluez-dev \
     boost-dev \
-    libieee1284-dev
-
+    libieee1284-dev \
+    musl-dev \
+    binutils-gold
 
 RUN apk --no-cache add --virtual pulseview-edge-build-dependencies \
     --repository http://dl-cdn.alpinelinux.org/alpine/edge/community \
@@ -33,6 +34,7 @@ WORKDIR /pulseview/build
 
 ENV SIGROK_CLI_LIBS /opt/sigrok/lib
 ENV PKG_CONFIG_PATH $SIGROK_CLI_LIBS/pkgconfig/
+ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$SIGROK_CLI_LIBS
 
 RUN cmake \
     -DCMAKE_INSTALL_PREFIX=/opt/pulseview \
