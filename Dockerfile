@@ -15,16 +15,16 @@ RUN apk --no-cache add --virtual pulseview-build-dependencies \
     libusb-dev \
     libftdi1-dev \
     hidapi-dev \
-    bluez-dev
+    bluez-dev \
+    boost-dev \
+    libieee1284-dev
+
 
 RUN apk --no-cache add --virtual pulseview-edge-build-dependencies \
     --repository http://dl-cdn.alpinelinux.org/alpine/edge/community \
     qt5-qtbase-dev \
     qt5-qttools-dev \
     qt5-qtsvg-dev
-
-RUN apk add --no-cache boost-dev
-RUN apk add --no-cache libieee1284-dev
 
 RUN git clone --depth 1 git://sigrok.org/pulseview.git /pulseview
 
@@ -52,9 +52,7 @@ RUN apk add --no-cache --virtual pulseview-edge-runtime-dependencies \
     gtk+3.0
 
 RUN apk add --no-cache --virtual pulseview-runtime-dependencies \
-    boost
-
-RUN apk add --no-cache \
+    boost \
     libieee1284-dev \
     glibmm-dev \
     libzip-dev \
@@ -76,5 +74,4 @@ VOLUME /workspace
 WORKDIR /workspace
 
 CMD /usr/bin/xpra start --bind-tcp=0.0.0.0:10000 --html=on --start-child="pulseview" --exit-with-children --daemon=no --xvfb="/usr/bin/Xvfb +extension  Composite -screen 0 1280x720x24+32 -nolisten tcp -noreset" --pulseaudio=no --notifications=no --bell=no --mdns=no
-
 
