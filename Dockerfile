@@ -1,25 +1,12 @@
 FROM 0x01be/sigrok:arm32v6-lib as sigrok
 
-FROM alpine as builder
-
-COPY --from=sigrok /opt/sigrok/ /opt/sigrok/
 
 RUN apk --no-cache add --virtual pulseview-build-dependencies \
     git \
     build-base \
     cmake \
     pkgconfig \
-    python3-dev \
-    glibmm-dev \
-    libzip-dev \
-    libusb-dev \
-    libftdi1-dev \
-    hidapi-dev \
-    bluez-dev \
-    boost-dev \
-    libieee1284-dev \
-    musl-dev \
-    binutils-gold
+    boost-dev
 
 RUN apk --no-cache add --virtual pulseview-edge-build-dependencies \
     --repository http://dl-cdn.alpinelinux.org/alpine/edge/community \
@@ -32,10 +19,6 @@ RUN git clone --depth 1 git://sigrok.org/pulseview.git /pulseview
 RUN mkdir -p /pulseview/build
 WORKDIR /pulseview/build
 
-ENV SIGROK_CLI_LIBS /opt/sigrok/lib
-ENV PKG_CONFIG_PATH $SIGROK_CLI_LIBS/pkgconfig/
-ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:$SIGROK_CLI_LIBS
-
 RUN cmake \
     -DCMAKE_INSTALL_PREFIX=/opt/pulseview \
     -DENABLE_DECODE=ON \
@@ -46,12 +29,12 @@ RUN make install
 FROM 0x01be/xpra:arm32v6
 
 COPY --from=builder /opt/pulseview/ /opt/pulseview/
+COPY --from=builder /opt/sigrock/ /opt/sigrock/
 
 RUN apk add --no-cache --virtual pulseview-edge-runtime-dependencies \
     --repository http://dl-cdn.alpinelinux.org/alpine/edge/community \
     qt5-qtbase \
-    qt5-qtsvg \
-    gtk+3.0
+    qt5-qtsvg
 
 RUN apk add --no-cache --virtual pulseview-runtime-dependencies \
     boost \
@@ -63,12 +46,10 @@ RUN apk add --no-cache --virtual pulseview-runtime-dependencies \
     hidapi-dev \
     bluez-dev
 
-COPY --from=sigrok /opt/sigrok/ /opt/sigrok/
 ENV LD_LIBRARY_PATH $LD_LIBRARY_PATH:/opt/sigrok/lib
+ENV LD_RUN_PATH $LD_RUN_PATH:/opt/sigrok/lib
 
-#COPY --from=sigrok /opt/sigrock/ /opt/sigrock/
 ENV PATH $PATH:/opt/pulseview/bin/
-#ENV PATH $PATH:/opt/sigrok/bin/:/opt/pulseview/bin/
 
 EXPOSE 10000
 
