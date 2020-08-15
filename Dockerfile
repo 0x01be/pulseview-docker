@@ -4,7 +4,8 @@ RUN apk --no-cache add --virtual pulseview-build-dependencies \
     git \
     build-base \
     cmake \
-    pkgconfig
+    pkgconfig \
+    boost-dev
 
 RUN apk --no-cache add --virtual pulseview-edge-build-dependencies \
     --repository http://dl-cdn.alpinelinux.org/alpine/edge/community \
