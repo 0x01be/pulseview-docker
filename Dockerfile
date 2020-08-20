@@ -28,7 +28,7 @@ RUN make install
 FROM 0x01be/xpra
 
 COPY --from=builder /opt/pulseview/ /opt/pulseview/
-COPY --from=builder /opt/sigrock/ /opt/sigrock/
+COPY --from=builder /opt/sigrok/ /opt/sigrok/
 
 RUN apk add --no-cache --virtual pulseview-edge-runtime-dependencies \
     --repository http://dl-cdn.alpinelinux.org/alpine/edge/community \
